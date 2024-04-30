@@ -1,3 +1,4 @@
+
 #ifndef HASH_H
 #define HASH_H
 
@@ -21,7 +22,32 @@ struct MyStringHash {
     {
         // Add your code here
 
+        unsigned long long w[5] = {};
 
+        HASH_INDEX_T resultHash = 0;
+        std::string temp = k;
+        
+        for(size_t i = 0; i < 5; ++i) {
+            if (k.length() > 6 * (4 - i)) {
+                int len = 6;
+                if (temp.length() > 6 && temp.length() % 6 != 0) {
+                    len = temp.length() % 6;
+                }
+
+                std::string current = temp.substr(0, len);
+                temp.erase(0, len);
+
+                int power = current.size() - 1;
+                for (int charPos = power; charPos >= 0; --charPos) {
+                    char ch = current[charPos];
+                    int numericval = letterDigitToNumber(ch);
+                    w[i] += pow(36, power - charPos) * numericval;
+                }
+            }
+
+            resultHash += rValues[i] * w[i];
+        }
+        return resultHash;
     }
 
     // A likely helper function is to convert a-z,0-9 to an integral value 0-35
@@ -29,6 +55,13 @@ struct MyStringHash {
     {
         // Add code here or delete this helper function if you do not want it
 
+            letter = tolower(letter);
+            if (isalpha(letter)) {
+                return letter - 'a';  
+            } else if (isdigit(letter)) {
+                return 26 + (letter - '0'); 
+            }
+            return 0;
     }
 
     // Code to generate the random R values
@@ -47,3 +80,4 @@ struct MyStringHash {
 };
 
 #endif
+
